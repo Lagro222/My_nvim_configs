@@ -3,12 +3,9 @@ local default_config = require "nvchad.configs.lspconfig"
 local on_init = default_config.on_init
 
 -- Use blink.cmp's LSP capabilities (proper snippet/completion support)
--- This replaces NvChad's old manual capabilities table built for nvim-cmp
 local capabilities = require("blink.cmp").get_lsp_capabilities()
 
 -- Global base config for all servers
--- NvChad already sets its own LspAttach autocmd for keymaps (gD, gd, <leader>wa, etc.)
--- We add our own LspAttach ONLY for extra keymaps and per-client tweaks
 vim.lsp.config("*", {
   capabilities = capabilities,
   on_init = on_init,
@@ -19,13 +16,12 @@ vim.api.nvim_create_autocmd("LspAttach", {
     local client = vim.lsp.get_client_by_id(args.data.client_id)
     local bufnr = args.buf
 
-    -- Extra keymaps (NvChad already handles gD, gd, <leader>wa, etc.)
     local opts = { noremap = true, silent = true, buffer = bufnr }
     vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, opts)
     vim.keymap.set("n", "gr", vim.lsp.buf.references, opts)
     vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
 
-    -- Disable ALL formatting for ts_ls so conform/prettierd handles it exclusively
+    -- Disable formatting for ts_ls (conform/prettierd handles it)
     if client and client.name == "ts_ls" then
       client.server_capabilities.documentFormattingProvider = false
       client.server_capabilities.documentRangeFormattingProvider = false
@@ -49,7 +45,7 @@ vim.lsp.config("html", {})
 -- CSS LSP
 vim.lsp.config("cssls", {})
 
--- TailwindCSS LSP (only starts if tailwind config exists)
+-- TailwindCSS LSP
 vim.lsp.config("tailwindcss", {
   root_markers = { "tailwind.config.js", "tailwind.config.cjs", "tailwind.config.mjs", "tailwind.config.ts" },
 })
@@ -59,7 +55,7 @@ vim.lsp.config("bashls", {
   filetypes = { "sh", "bash" },
 })
 
--- Markdown LSP (Marksman)
+-- Markdown LSP
 vim.lsp.config("marksman", {
   filetypes = { "markdown", "markdown.mdx" },
 })
@@ -84,13 +80,32 @@ vim.lsp.config("ts_ls", {
   },
 })
 
+-- Angular LSP
+local ng_cmd = {
+  "ngserver",
+  "--stdio",
+  "--tsProbeLocations",
+  vim.fn.stdpath "data" .. "/mason/packages/angular-language-server/node_modules",
+  "--ngProbeLocations",
+  vim.fn.stdpath "data" .. "/mason/packages/angular-language-server/node_modules/@angular/language-server/node_modules",
+}
+
+vim.lsp.config("angularls", {
+  cmd = ng_cmd,
+  filetypes = { "typescript", "html", "typescriptreact", "typescript.tsx" },
+  root_markers = { "angular.json", "nx.json" },
+  on_new_config = function(new_config)
+    new_config.cmd = ng_cmd
+  end,
+})
+
 -- JSON LSP
 vim.lsp.config("jsonls", {})
 
 -- ESLint LSP
 vim.lsp.config("eslint", {})
 
--- Emmet LSP: limit to HTML/CSS/JSX only (NOT plain javascript/typescript)
+-- Emmet LSP
 vim.lsp.config("emmet_ls", {
   filetypes = {
     "html",
@@ -108,10 +123,17 @@ vim.lsp.config("emmet_ls", {
   },
 })
 
--- GraphQL LSP (only starts if graphql config exists)
+-- GraphQL LSP
 vim.lsp.config("graphql", {
   filetypes = { "graphql", "typescriptreact", "javascriptreact", "typescript", "javascript" },
-  root_markers = { ".graphqlrc", ".graphqlrc.yml", ".graphqlrc.yaml", ".graphqlrc.json", "graphql.config.js", "graphql.config.ts" },
+  root_markers = {
+    ".graphqlrc",
+    ".graphqlrc.yml",
+    ".graphqlrc.yaml",
+    ".graphqlrc.json",
+    "graphql.config.js",
+    "graphql.config.ts",
+  },
 })
 
 -- YAML LSP
@@ -123,12 +145,10 @@ vim.lsp.config("yamlls", {
         url = "https://www.schemastore.org/api/json/catalog.json",
       },
       schemas = {
-        -- Docker Compose
         ["https://raw.githubusercontent.com/compose-spec/compose-spec/master/schema/compose-spec.json"] = {
           "docker-compose*.yml",
           "compose*.yml",
         },
-        -- GitHub Actions
         ["https://json.schemastore.org/github-workflow.json"] = ".github/workflows/*.yml",
       },
       validate = true,
@@ -159,8 +179,7 @@ vim.lsp.config("dockerls", {})
 -- Docker Compose LSP
 vim.lsp.config("docker_compose_language_service", {})
 
--- Lua LSP: NvChad already enables lua_ls in its defaults() function.
--- We override specific settings here; lazydev.nvim handles workspace libraries automatically.
+-- Lua LSP
 vim.lsp.config("lua_ls", {
   settings = {
     Lua = {
@@ -180,8 +199,22 @@ vim.lsp.config("lua_ls", {
   },
 })
 
+-- -- Java
+-- vim.lsp.config("jdtls", {
+--   settings = {
+--     java = {
+--       format = { enabled = true },
+--       inlayHints = {
+--         parameterNames = { enabled = "all" },
+--       },
+--       completion = {
+--         importOrder = { "java", "jakarta", "org", "com" },
+--       },
+--     },
+--   },
+-- })
+
 -- Enable all servers
--- NOTE: lua_ls is intentionally omitted because NvChad's default config already enables it.
 vim.lsp.enable {
   "html",
   "cssls",
@@ -189,6 +222,7 @@ vim.lsp.enable {
   "bashls",
   "marksman",
   "ts_ls",
+  "angularls",
   "jsonls",
   "eslint",
   "emmet_ls",
@@ -198,10 +232,9 @@ vim.lsp.enable {
   "prismals",
   "dockerls",
   "docker_compose_language_service",
+  -- "jdtls",
 }
 
--- Merge with NvChad's diagnostic config (which sets icons, prefixes, borders).
--- This only adds update_in_insert = false without overwriting anything else.
 vim.diagnostic.config {
   update_in_insert = false,
 }

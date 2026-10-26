@@ -16,6 +16,7 @@ local options = {
     graphql = { "prettierd" },
     c = { "clang_format" },
     cpp = { "clang_format" },
+    java = { "injected" },
   },
 
   format_on_save = {

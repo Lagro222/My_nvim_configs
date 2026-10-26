@@ -12,7 +12,11 @@ return {
       require "configs.lspconfig"
     end,
   },
-
+  --jdtls
+  {
+    "mfussenegger/nvim-jdtls",
+    ft = "java",
+  },
   -- Lua LSP workspace awareness (replaces manual vim.api.nvim_get_runtime_file)
   {
     "folke/lazydev.nvim",
@@ -174,6 +178,20 @@ return {
       },
       signature = { enabled = true, window = { border = "rounded" } },
     },
+  },
+
+  --codeium
+  {
+    "Exafunction/codeium.vim",
+    event = "InsertEnter",
+  },
+
+  {
+    "supermaven-inc/supermaven-nvim",
+    event = "InsertEnter",
+    config = function()
+      require("supermaven-nvim").setup {}
+    end,
   },
 
   {

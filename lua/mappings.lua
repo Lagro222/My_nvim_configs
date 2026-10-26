@@ -6,11 +6,20 @@ map("n", ";", ":", { desc = "CMD enter command mode" })
 map("i", "jk", "<ESC>")
 
 -- disable NvChad terminal keymaps
-vim.keymap.del("n", "<leader>h")
-vim.keymap.del("n", "<leader>v")
-map({ "n", "t" }, "<A-v>", "<nop>", { desc = "disabled" })
-map({ "n", "t" }, "<A-h>", "<nop>", { desc = "disabled" })
+-- vim.keymap.del("n", "<leader>h")
+-- vim.keymap.del("n", "<leader>v")
+-- map({ "n", "t" }, "<A-v>", "<nop>", { desc = "disabled" })
+-- map({ "n", "t" }, "<A-h>", "<nop>", { desc = "disabled" })
 
+-- Horizontal terminal
+map({ "n", "t" }, "<A-h>", function()
+  require("nvchad.term").toggle { pos = "sp", id = "hterminal" }
+end, { desc = "Toggle horizontal terminal" })
+
+-- Vertical terminal
+map({ "n", "t" }, "<A-v>", function()
+  require("nvchad.term").toggle { pos = "vsp", id = "vterminal" }
+end, { desc = "Toggle vertical terminal" })
 -- Save file with Ctrl + S in normal, insert, and visual modes
 map({ "n", "i", "v" }, "<C-s>", "<cmd> w <cr>", { desc = "Save file" })
 
@@ -62,13 +71,27 @@ map({ "n", "t" }, "<A-i>", function()
 end, { desc = "Toggle floating terminal" })
 
 -- Kulala HTTP client (works in .http / .rest files)
-map("n", "<leader>Rs", function() require("kulala").run() end,              { desc = "Kulala: Send request" })
-map("n", "<leader>Ra", function() require("kulala").run_all() end,          { desc = "Kulala: Send all requests" })
-map("n", "<leader>Rn", function() require("kulala").jump_next() end,        { desc = "Kulala: Next request" })
-map("n", "<leader>Rp", function() require("kulala").jump_prev() end,        { desc = "Kulala: Prev request" })
-map("n", "<leader>Re", function() require("kulala").set_selected_env() end, { desc = "Kulala: Select environment" })
-map("n", "<leader>Rc", function() require("kulala").copy() end,             { desc = "Kulala: Copy as curl" })
-map("n", "<leader>Rq", function() require("kulala").close() end,            { desc = "Kulala: Close response" })
+map("n", "<leader>Rs", function()
+  require("kulala").run()
+end, { desc = "Kulala: Send request" })
+map("n", "<leader>Ra", function()
+  require("kulala").run_all()
+end, { desc = "Kulala: Send all requests" })
+map("n", "<leader>Rn", function()
+  require("kulala").jump_next()
+end, { desc = "Kulala: Next request" })
+map("n", "<leader>Rp", function()
+  require("kulala").jump_prev()
+end, { desc = "Kulala: Prev request" })
+map("n", "<leader>Re", function()
+  require("kulala").set_selected_env()
+end, { desc = "Kulala: Select environment" })
+map("n", "<leader>Rc", function()
+  require("kulala").copy()
+end, { desc = "Kulala: Copy as curl" })
+map("n", "<leader>Rq", function()
+  require("kulala").close()
+end, { desc = "Kulala: Close response" })
 
 -- Tmux Neovim Navigator
 map("n", "<C-h>", "<cmd>TmuxNavigateLeft<CR>", { desc = "Navigate left (tmux)" })
