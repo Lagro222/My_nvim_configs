@@ -62,6 +62,8 @@ return {
           "svelte",
           "python",
           "cs",
+          "sql",
+          "plsql",
         },
         jsx_brackets = true,
         remove_template_string = false,
@@ -181,8 +183,16 @@ return {
         return true
       end,
       sources = {
+        per_filetype = {
+          sql = { "dadbod", "buffer" },
+          mysql = { "dadbod", "buffer" },
+          plsql = { "dadbod", "buffer" },
+          oracle = { "dadbod", "buffer" },
+        },
+
         providers = {
           snippets = { score_offset = 7 },
+          dadbod = { name = "Dadbod", module = "vim_dadbod_completion.blink" },
         },
       },
       completion = {

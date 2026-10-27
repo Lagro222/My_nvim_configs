@@ -36,3 +36,10 @@ vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
     vim.bo.filetype = "yaml.docker-compose"
   end,
 })
+
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = { "sql", "mysql", "plsql", "oracle" },
+  callback = function()
+    vim.bo.commentstring = "-- %s"
+  end,
+})
