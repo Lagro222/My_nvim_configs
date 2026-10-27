@@ -112,6 +112,19 @@ return {
     opts = {},
   },
 
+  --vim-dadbod
+  {
+    "kristijanhusak/vim-dadbod-ui",
+    dependencies = {
+      { "tpope/vim-dadbod", lazy = true },
+      { "kristijanhusak/vim-dadbod-completion", ft = { "sql", "mysql", "plsql" }, lazy = true },
+    },
+    cmd = { "DBUI", "DBUIToggle", "DBUIAddConnection" },
+    init = function()
+      vim.g.db_ui_use_nerd_fonts = 1
+    end,
+  },
+
   -- HTTP REST client for testing Node.js/Express API endpoints (.http files)
   {
     "mistweaverco/kulala.nvim",
